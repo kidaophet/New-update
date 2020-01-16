@@ -28,17 +28,21 @@ const Postout=new Postsout();
 const Postsprincipal=require('../components/principal.component');
 const Postprin=new Postsprincipal();
 
-const Postcal=require('../components/calculation.component');
-const Postc=new Postcal();
+const Postcalcu=require('../components/calculation.component');
+const Postc=new Postcalcu();
 
 
 const Postpay=require('../components/pay.component');
-const Postp=new Postpay();
+const postp=new Postpay();
 
 
 const Postrate=require('../components/rate.component');
 const postr=new Postrate();
 
+
+
+const Postcal=require('../components/cal.component');
+const postcc=new Postcal();
 
 //////////////////////////////////
 
@@ -221,21 +225,31 @@ module.exports = router;
 ///////////////////////////////////////////////
 
 
-router.get('/payment', (req, res) => res.sendAsyncApi(Postp.selectAll()));
+router.get('/payment', (req, res) => res.sendAsyncApi(postp.selectAll()));
 
-router.get('/payment/:pay_id', (req, res) => res.sendAsyncApi(Postp.selectOne(req.params.pay_id)));
+router.get('/payment/:pay_id', (req, res) => res.sendAsyncApi(postp.selectOne(req.params.pay_id)));
 
-router.post('/payment', (req, res) => res.sendAsyncApi(Postp.create(req.body)));
+router.post('/payment', (req, res) => res.sendAsyncApi(postp.create(req.body)));
 
-router.put('/payment/:pay_id', (req, res) => res.sendAsyncApi(Postp.update(req.params.pay_id, req.body)));
+router.put('/payment/:pay_id', (req, res) => res.sendAsyncApi(postp.update(req.params.pay_id, req.body)));
 
-router.delete('/payment/:pay_id', (req, res) => res.sendAsyncApi(Postp.delete(req.params.pay_id)));
+router.delete('/payment/:pay_id', (req, res) => res.sendAsyncApi(postp.delete(req.params.pay_id)));
 
 module.exports = router;
 
 /////////////////////////////////////////////
 
+router.get('/cal', (req, res) => res.sendAsyncApi(postcc.selectAll()));
 
+router.get('/cal/:id', (req, res) => res.sendAsyncApi(postcc.selectOne(req.params.id)));
+
+router.post('/cal', (req, res) => res.sendAsyncApi(postcc.create(req.body)));
+
+router.put('/cal/:id', (req, res) => res.sendAsyncApi(postcc.update(req.params.id, req.body)));
+
+router.delete('/cal/:id', (req, res) => res.sendAsyncApi(postcc.delete(req.params.id)));
+
+module.exports = router;
 
 
 

@@ -1,93 +1,96 @@
-var express= require('express');
+
 class Functions {
-payment(principle,term){
-    // calculate principle payment
-const principle=12000000;
-const day=365;
-const year = 1;
-const term=year*day;
-let principlepayment=principle/term;
-for(i=1;i<=term;i++){
-    console.log("Prinpay:"+principlepayment);
-    break;
-}
-//calculate normal payment
-const normalinterest=15/100;
-let normalpayment=principle*normalinterest/term;
-for(i=1;i<=term;i++){ 
-    console.log("Norpay:"+normalpayment);
-    break;
-}
-//calculate dreaft days
-const deadline = new Date('11/28/2019');
-const datepay = new Date('11/30/2019');
-if(datepay>deadline){
-    let diffTime = Math.abs(deadline - datepay);
-    var outstanding = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-    console.log("Draftdays:"+outstanding);
-}else{
-    console.log('Nothing');
-}
-// calculate penalty payment
-const penaltyinterest=12/100;
-let pen=((principle*penaltyinterest/term)*outstanding)+((normalpayment*penaltyinterest/term)*outstanding);
-for(i=1;i<=term;i++){
-    console.log("Penalpay:"+pen);
-    break;
-}
-//total payment
-var sum = principlepayment+normalpayment+pen;
-console.log("Total:"+sum);
-// case payment step by step
-let payment=10000
-console.log("Pen: "+pen);
-console.log("Pay: "+payment);
-if(pen>0){
-    var penpay=payment-pen;
-    for(i=1;i<=term;i++){
-        console.log("Pen Pay: "+penpay);  
-        break;
-    }
-    if(penpay > 0 ){
-        var penn=pen+penpay;
-        console.log(penn);
-    }
-    pen=0;
-    payment = penpay;
-}
-console.log("NP: "+normalpayment);
-console.log("Pay: "+payment);
- if(pen<=0){
-    var norpay=payment-normalpayment;
-    for(i=1;i<=term;i++){
-        console.log("Normal Pay: "+norpay);
-        break;
-    }
-    if(norpay>0){
-        var principay=norpay-principlepayment;
-        console.log("Prinsum:"+principay);
-    }
-    normalpayment = 0;
-    payment = norpay;
-} 
-if(normalpayment<=0){
-    var prinpay=payment-principlepayment;
-    for(i=1;i<=term;i++){
-        console.log("Principle Pay: "+prinpay);
-        break;
-    }
-    if(prinpay > 0 ){
-        var Total=principle-prinpay;
-        console.log(Total);
-    }
-    principlepayment=0
-    payment=Total;
-}
-var draft=pen+normalpayment;
-console.log(draft);
-}
-}
-//TO DO:
-// - ຖ້າຈ່າຍເກິນແລ້ວຫັກຄ່າເພື່ອມາເກັບໄວ້ລົບຄັ່ງຕໍ່ໄປ
-// - ຖ້າຈ່າຍບໍ່ພໍຕ້ອງເກັບຄ່າໄວຫັກຄັ່ງຕໍ່ໄປ
-module.exports=Functions;
+    payment2(){
+        
+        
+
+
+
+
+
+    }}
+//        // calculate principle payment
+// //ການຄິດໄລເງີນຕົ້ນທື່ນທັງຫມົດຖຸຶກກູ້ຢື່ມໄປ
+// //ຈຳນວນປີ, ເງີນຕົ້ນຈທີ່ຕ້ອງຈ່າຍ, ດອກເບ້ຍ 15%, ຄ່າປັບໄຫມເປັນ 20%
+// // const principle=1000000;
+// // const term=365;
+// // const principlepayment = principle/term;
+// // const defaultInterest = principlepayment * 15/100; //ດອກເບຍຈ່າຍແບບປົກກະຕິ ບໍ່ມີຄ່າປັບໄຫມ
+// // const penaltyInterest = principlepayment * 20/100; //ດອກເບຍຈ່າຍແບບກ່າຍກຳນົດມີຄ່າປັບໄຫມ
+// // console.log("- Principle Laon: ", principle);
+// // console.log("- Term: " + term);
+// // console.log("- Principle Pay: " + principlepayment);
+// // console.log("- Base Default Pay with 15%:" + defaultInterest);
+// // console.log("- Base Default Penalty Pay with 20%: " + penaltyInterest);
+// //calculate normal payment
+// //ກວດສອບການຈ່າຍປົກກະຕິ
+// principle=120000;
+// term=2;
+// normal_rate=10;
+// penalty_rate=15;
+// outstanding_days=2;
+
+// const pp=principle/term;
+// const nor= principle * normal_rate/100/term;
+// const pen=((principle*penalty_rate/term)*outstanding_days)+((nor*penalty_rate/term)*outstanding_days);
+// const sum=pp+nor+pen;
+// let amount=20000;
+
+// console.log(pp);
+// console.log(nor);
+// console.log(pen);
+// console.log(sum);
+// console.log(amount);
+
+
+// for(i=1; i<=term;i++){
+//     if(amount < sum){
+//         let penpay = amount-pen;
+//         if(penpay>0){
+//             let penpay1=penpay-nor;
+//         }else{
+//             let penpay1=penpay++;
+//         }
+//         // console.log("- Draft Payment Delay:" + count);
+//     }else{
+//         let penpay = penaltyPay++;
+//         // console.log("- Payment Delay Results: " + count);
+//     }
+//     console.log(penpay);
+//     console.log(penpay1);
+// }
+// //calculate dreaft days
+// // const delaypay = principlepayment * 20/100;
+// //ກວດສອບເວລາກ່າຍກຳນົດ
+// const date = new Date('11/24/2019');
+// const date_pay = new Date('11/30/2019');
+//     if(datepay>deadline){
+//         let diffTime = Math.abs( date_pay-date);
+//         var delaypay = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+//             if(delaypay === 0) {
+//                 let count = principlepayment * 15/100;
+//                 // console.log(count);
+//             }else {
+//                 let sumday = delaypay++;
+//                 let count_total = principlepayment * sumday * 20/100;
+//                 // console.log("- Delay Day: " + sumday + "\n" + "- Count Total penalty Interest:" + count_total)
+//             }
+//         }else{
+//     let normalpayment = defaultInterest * 15/100;
+//     let count = normalpayment - penaltyInterest;
+//     // console.log(count);
+// }
+// // calculate penalty payment
+// //ກວດສອນການຈາຍແບບປັບໄຫມ່
+// let pay = 5000;
+// // console.log("- User Payment:" + pay);
+// if(delaypay === 0) {
+//     let count = pay - defaultInterest;
+//     let sum = count + principlepayment;
+//     // console.log("- Pay with Normal INterest as 15% : " + sum);
+// }else{
+//     let count = pay - penalty * delaypay;
+//     // console.log("- Pay with Penalty Interest as 20% : " + count)
+// }
+//     }
+// }

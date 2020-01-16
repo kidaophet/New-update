@@ -12,51 +12,22 @@ class Postsout {
         this._validate.validators.format.message = 'ບໍ່ຖືກຕ້ອງຕາມຮູບແບບ';
         this._validate.validators.numericality.message = 'ເປັນໂຕເລກເທົ່ານັ້ນ';
         this.validate_rules = {
-            loan_date: {
+            pay_id: {
                 presence: {
                     allowEmpty: false
                 }
             },
-            deadline: {
-                presence: {
-                    allowEmpty: false
-                }
-            },
-            outstanding_days: {
-                presence: {
-                    allowEmpty: false
-                }
-            },
-            principle: {
-                presence: {
-                    allowEmpty: false
-                }
-            },
-            interest_rate: {
-                presence: {
-                    allowEmpty: false
-                }
-            },
-            repayment: {
-                presence: {
-                    allowEmpty: false
-                }
-            },
-            discount: {
-                presence: {
-                    allowEmpty: false
-                }
-            },
-            balance: {
+            overdays: {
                 presence: {
                     allowEmpty: false
                 }
             }
+            
         };
     }
     // Show all data
     selectAll() {
-        return this._database.query('select * from outstanding_days');
+        return this._database.query('select payment.Date_pay,outstanding_days.overdays');
     }
     // show one data
     async selectOne(out_id) {
@@ -70,25 +41,14 @@ class Postsout {
         const errors = this._validate(value, this.validate_rules);
         if (errors) throw { errors };
         const outst = new outs();
-        let outstand = outst.outstanding_days(
-            value['loan_date'],
+        let outstand = outst.outstand(
+            value['pay_id'],
             value['deadline'],
-            value['outstanding_days'],
-            value['principle'],
-            value['interest_rate'],
-            value['repayment'],
-            value['discount'],
-            value['balance']
         );
-        const item = await this._database.query('insert into outstanding_days value(0, ?, ?, ?, ?, ?, ?, ?, ?)', [
-            value['loan_date'],
-            value['deadline'],
-            outstand.od,
-            outstand.ai,
-            value['interest_rate'],
-            value['repayment'],
-            value['discount'],
-            outstand.bal
+        const item = await this._database.query('insert into outstanding_days value(0, ?, ?)', [
+            value['pay_id'],
+            value['overdays'],
+
         ]);
         return await this.selectOne(outs.insertId);
     }
@@ -99,24 +59,13 @@ class Postsout {
         if (errors || errorsId) throw { errors: errorsId || errors };
         await this._database.query(`
             update outstanding_days set 
-            loan_date=?,
-            deadline=?,
-            outstanding_days = ?, 
-            amount=?,
-            interest_rate=?,
-            repayment = ?,
-            discount = ?,
-            balance = ?
+            pay_id=?,
+            overdays=?,
             where out_id = ?`, 
             [
-            value['loan_date'],
-            value['deadline'],
-            outstand.od,
-            outstand.ai,
-            value['interest_rate'],
-            value['repayment'],
-            value['discount'],
-            outstand.bal
+            value['pay_id'],
+            value['overdays'],
+
             ]);
         return await this.selectOne(out_id);
     }

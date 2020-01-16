@@ -1,6 +1,5 @@
 const validate = require('validate.js');
 const database = require('../configs/database');
-
 class Postsuser {
     //table user
     constructor(valid = validate, db = database.MySqlDatabase) {
@@ -12,7 +11,6 @@ class Postsuser {
         this._validate.validators.format.message = 'ບໍ່ຖືກຕ້ອງຕາມຮູບແບບ';
         this._validate.validators.numericality.message = 'ເປັນໂຕເລກເທົ່ານັ້ນ';
         this.validate_rules = {
-            
             name: {
                 presence: {
                     allowEmpty: false
@@ -65,10 +63,8 @@ class Postsuser {
             value['contact'],
             value['type']
         ]);
-        
         return await this.selectOne(item.insertId);
     }
-
     // แก้ไขข้อมูล
     async update(em_id, value) {
         const errors = this._validate(value, this.validate_rules);

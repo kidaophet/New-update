@@ -2,7 +2,7 @@ const validate = require('validate.js');
 const database = require('../configs/database');
 const calcul = require('../formular/function');
 
-class Postcal{
+class Postcalcu{
     //table user
     constructor(valid = validate, db = database.MySqlDatabase) {
         // use Database
@@ -29,7 +29,6 @@ class Postcal{
                     allowEmpty: false
                 }
             },
-
             rate_id: {
                 presence: {
                     allowEmpty: false
@@ -57,11 +56,7 @@ class Postcal{
     }
     // show all info
     selectAll() {
-        return this._database.query('SELECT calculation.principlepay,calculation.normal_interest,calculation.penalty_interest,rate.normal_rate,rate.penalty_rate,loan.term,principal.principle\
-        from calculation\
-        JOIN rate ON rate.rate_id=calculation.rate_id\
-        JOIN loan ON loan.loan_id=calculation.loan_id\
-        JOIN principal on principal.pri_id=calculation.pri_id');
+        return this._database.query('SELECT*from calculation');
     }
     // show orderby ID
     async selectOne(cal_id) {
@@ -75,25 +70,25 @@ class Postcal{
         const errors = this._validate(value, this.validate_rules);
         if (errors) throw { errors };
         const func_c_rate = new calcul();
-        let rate_c = func_c_rate.calculation(
+        let rate_c = func_c_rate.calculate(
             value['principlepay'],
             value['normal_interest'],
             value['penalty_interest'],
             value['rate_id'],
             value['loan_id'],
             value['out_id'],
-            value['pri_id'],
-            value['pay_id']
+            value['pri_id']
         );
-        const item = await this._database.query('insert into calculation value(0, ?, ?, ?, ?, ?, ?, ?, ?)', [
+
+        
+        const item = await this._database.query('insert into calculation value(0, ?, ?, ?, ?, ?, ?, ?)', [
             rate_c.pp,
             rate_c.nor,
             rate_c.pen,
             value['rate_id'],
             value['loan_id'],
             value['out_id'],
-            value['pri_id'],
-            value['pay_id']
+            value['pri_id']
         ]);
         return await this.selectOne(calcul.insertId);
     }
@@ -103,7 +98,13 @@ class Postcal{
         const errorsId = this._validate({ cal_id }, { cal_id: { numericality: true } });
         if (errors || errorsId) throw { errors: errorsId || errors };
         const cal_func= new calcul();
-        let cal_rate = cal_func.calculation(
+        let cal_rate = cal_func.calculat(
+            // value['principle'],
+            // value['normal_rate'],
+            // value['penalty_rate'],
+            // value['term'],
+            // value['outstanding_days']
+
             value['principlepay'],
             value['normal_interest'],
             value['penalty_interest'],
@@ -144,4 +145,4 @@ class Postcal{
         return await this._database.query('delete from calculation where cal_id=?', [cal_id]);
     }
 }
-module.exports=Postcal;
+module.exports=Postcalcu;
