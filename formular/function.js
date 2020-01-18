@@ -92,10 +92,7 @@ class Functions {
         // var obj = JSON.parse(txt);
         return total;
     }
-
-
-
-
+   
     payment(principlepay,normal_interest,penalty_interest,term,amount){
 
 
@@ -139,8 +136,6 @@ for(i=1;i<+term;i++){
 }
 return ;
     }
-
-    
 } 
 module.exports=Functions;
 

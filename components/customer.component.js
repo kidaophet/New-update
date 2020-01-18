@@ -77,97 +77,83 @@ class Postscustomer {
         const items = await this._database.query('select * from customer where cus_id=?', [cus_id]);
         return items.length == 0 ? null : items[0];
     }
-    // เพิ่่มข้อมูลใหม่
-    async create(value) {
-        const errors = this._validate(value, this.validate_rules);
-        if (errors) throw { errors };
-        const item2 = await this._database.query('insert into rate value(0, ?, ?)', [
-            value['normal_rate'],
-            value['penalty_rate']
-        ])
-        const item3 = await this._database.query('insert into principal value(0, ?)', [
-            value['principle']
-        ])
-        const item = await this._database.query('insert into customer value(0, ?, ?, ?, ?, ?, ?, ?)', [
-            value['firstname'],
-            value['Surname'],
-            value['gender'],
-            value['Address'],
-            value['Contact'],
-            value['Email'],
-            value['evidence']
-        ])
-        const item1 = await this._database.query('insert into loan value(0,?,?, ?, ?, ?, ?)', [
-            value['em_id'],
-            value['create_loan_date'],
-            value['Date_loan'],
-            value['term'],
-            value['pri_id'],
-            value['rate_id']
-        ])
-        const func_c_rate = new calcul();
-        // calculate(principle,normal_rate,penalty_rate,term,outstanding_days)
-        let rate_c = func_c_rate.calculate(
-            value['principle'],
-            value['normal_rate'],
-            value['penalty_rate'],
-            value['term'],
-            '0'
-        );
-        var i;
-        
-        for(i=0;i<value['term'];i++){
-            const item4 = await this._database.query('insert into calculation value(0, ?, ?, ?, ?, ?, ?, ?)', [
-                rate_c.principlecal,
-                rate_c.normalcal,
-                rate_c.penaltycal,
-                value['rate_id'],
-                value['loan_id'],
-                value['out_id'],
-                value['pri_id']
-            ]);
-        }
-
-
+   // เพิ่่มข้อมูลใหม่
+   async create(value) {
+    // const errors = this._validate(value, this.validate_rules);
+    let Date_loan = new Date()
+    // if (errors) throw { errors };
+    const item2 = await this._database.query('insert into rate value(0, ?, ?)', [
+        value['normal_rate'],
+        value['penalty_rate']
+    ])
+    const item3 = await this._database.query('insert into principal value(0, ?)', [
+        value['principle']
+    ])
+    const item = await this._database.query('insert into customer value(0, ?, ?, ?, ?, ?, ?, ?)', [
+        value['firstname'],
+        value['surname'],
+        value['gender'],
+        value['address'],
+        value['contact'],
+        value['email'],
+        value['evidence']
+    ])
+    const item1 = await this._database.query('insert into loan value(0, ?,?, ?, ?, ?, ?, ?, ?, ?)', [
+        "1",
+        value['create_loan_date'],
+        Date_loan,
+        value['term'],
+        item3.insertId,
+        item2.insertId,
+        "NULL",
+        "NULL",
+        "NULL"
+    ])
+    const func_c_rate = new calcul();
   
-        let cal = func_c_rate.calculate(
-            value['principle'],
-            value['normal_rate'],
-            value['penalty_rate'],
-            value['term'],
-            '0'
-        );
-        var i;
-        for(i=0;i<value['term'];i++){
-        const item5 = await this._database.query('insert into cal value(0, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
-            value['date'],
-            cal.principlecal,
-            cal.normalcal,
-            cal.penaltycal,
-            value['outstanding_days'],
-            cal.totalcal,
-            value['remain'],
-            value['amount'],
-            value['date_pay']
-             ]);
-        }
 
-        ////////////////////////////////
-    
-        let out = func_c_rate.outstand(
-            value['date'],
-            value['date_pay']  
-        );
-        
-        const item6 = await this._database.query('insert into outstanding_days value(0, ?, ?, ?)', [
-            value['pay_id'],
-            out.outstandingcal,
-            value['id']
-             ]);
-        return cal;
-        return out;
-        // return await this.selectOne(item,item1,item2,item3,item4.insertId);
+    let cal = func_c_rate.calculate(
+        value['principle'],
+        value['normal_rate'],
+        value['penalty_rate'],
+        value['term'],
+        '0'
+    );
+    var i;
+    let remain = null;
+    let amount = null;
+    let date_pay = null;
+    for(i=0;i<value['term'];i++){
+    const item5 = await this._database.query('insert into cal value(0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
+        value['create_loan_date'],
+        cal.principlecal,
+        cal.normalcal,
+        cal.penaltycal,
+        "0",
+        cal.totalcal,
+        remain,
+        amount,
+        date_pay,
+        item1.insertId
+         ]);
     }
+
+    ////////////////////////////////
+
+    // let out = func_c_rate.outstand(
+    //     value['date'],
+    //     value['date_pay']  
+    // );
+    
+    // const item6 = await this._database.query('insert into outstanding_days value(0, ?, ?, ?)', [
+    //     value['pay_id'],
+    //     out.outstandingcal,
+    //     value['id']
+    //      ]);
+    return cal;
+    // return await this.selectOne(item,item1,item2,item3,item4.insertId);
+}
+
     // แก้ไขข้อมูล
     async update(cus_id, value) {
         const errors = this._validate(value, this.validate_rules);
@@ -187,6 +173,7 @@ class Postscustomer {
             value['principle'],
             pri_id
         ])
+
         await this._database.query(`
             update customer set 
                 firstname = ?, 
@@ -215,7 +202,8 @@ class Postscustomer {
             term=?,\
             pri_id=?,\
             rate_id=?\
-            where rate_id=?', [
+            where rate_id=?', 
+            [
                 value['em_id'],
                 value['create_loan_date'],
                 value['Date_loan'],
