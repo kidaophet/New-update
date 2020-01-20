@@ -13,7 +13,6 @@ class Postcal{
         this._validate.validators.presence.message = 'ຫ້າມເປັນຄ່າວ່າງ';
         this._validate.validators.numericality.message = 'ເປັນໂຕເລກເທົ່ານັ້ນ';
         this.validate_rules = {
-
             date: {
                 presence: {
                     allowEmpty: false
@@ -66,9 +65,6 @@ class Postcal{
             }
         }
     }
-
-
-
     // show all info
     selectAll() {
         return this._database.query('SELECT*from cal');
@@ -111,20 +107,23 @@ class Postcal{
             value['amount'],
             value['date_pay']
         ]);
-
         return await this.selectOne(cal.insertId);
-
     }
 // Update new info
-    async update(loan_id, value) {
-        let last_pay = awai(loan_id);
+    async update(loan_id, value) {    
+        let last_pay = await(loan_id);
         let pricinplepay = last_pay.pricinplepay;
         let normal_interest = last_pay.normal_interest;
         let total = last_pay.total;
-        let penalty_rate = 13;
-        let term = 5;
-        let outstanding_days = 0;
-        let normal_rate = 12;
+
+
+        let penalty_rate = value['penalty_rate'];
+        let term = value['term'];
+        let outstanding_days = value['outstanding_days'];
+        let normal_rate = value['normal_rate'];
+
+
+        
         const cal_func= new calcal();
         let cal_rate  = cal_func.calculate(
             pricinplepay,
@@ -132,10 +131,8 @@ class Postcal{
             normal_rate,
             term,
             outstanding_days
-
         );
-
-        return loan_id;
+        return value[loan_id];
 
         let amount = value['amount']
         let date_pay = value['date']

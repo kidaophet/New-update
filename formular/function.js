@@ -94,8 +94,6 @@ class Functions {
     }
    
     payment(principlepay,normal_interest,penalty_interest,term,amount){
-
-
 //         this.
 //         const amount= 10000;
 // const pp=10000;
