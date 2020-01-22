@@ -121,8 +121,6 @@ class Postcal{
         let term = value['term'];
         let outstanding_days = value['outstanding_days'];
         let normal_rate = value['normal_rate'];
-
-
         
         const cal_func= new calcal();
         let cal_rate  = cal_func.calculate(

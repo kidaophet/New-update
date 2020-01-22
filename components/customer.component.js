@@ -68,7 +68,10 @@ class Postscustomer {
     }
     // แสดงข้อมูลทั้งหมด
     selectAll() {
-        return this._database.query('SELECT*from customer');
+        return this._database.query(`SELECT loan.loan_id,customer.cus_id,customer.firstname,customer.surname,loan.create_loan_date,loan.Date_loan,loan.term,principal.principle
+        from loan
+        JOIN customer ON customer.cus_id=loan.cus_id
+        JOIN principal ON principal.pri_id=loan.pri_id`);
     }
     // แสดงข้อมูลแค่ข้อมูลเดียว
     async selectOne(cus_id) {
@@ -97,7 +100,7 @@ class Postscustomer {
         value['contact'],
         value['email'],
         value['evidence']
-    ])
+    ])    
     const item1 = await this._database.query('insert into loan value(0, ?,?, ?, ?, ?, ?, ?, ?, ?)', [
         "1",
         value['create_loan_date'],
@@ -110,8 +113,6 @@ class Postscustomer {
         "NULL"
     ])
     const func_c_rate = new calcul();
-  
-
     let cal = func_c_rate.calculate(
         value['principle'],
         value['normal_rate'],
@@ -119,6 +120,7 @@ class Postscustomer {
         value['term'],
         '0'
     );
+
     var i;
     let remain = null;
     let amount = null;
@@ -138,6 +140,7 @@ class Postscustomer {
          ]);
     }
 
+
     ////////////////////////////////
 
     // let out = func_c_rate.outstand(
@@ -153,6 +156,7 @@ class Postscustomer {
     return cal;
     // return await this.selectOne(item,item1,item2,item3,item4.insertId);
 }
+
 
     // แก้ไขข้อมูล
     async update(cus_id, value) {

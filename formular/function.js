@@ -32,56 +32,50 @@ class Functions {
         let pay=JSON.parse(repaymentcal);
         return pay;
     }
-
-
-
-
-
-
-    // normal_interest
-    normal_interest(principle,normal_rate,term) {
-        // var pi = principle;
-        // const n=normal_rate;
-        // var term=term;
-        const nor= parseFloat(principle)*parseFloat(normal_rate/100)/parseInt(term)
-        // for(i=1;i<term;i++){    
-            // var txt = '{"nor":'+nor+'}';
-            // var obj = JSON.parse(txt);
-            return nor;
-        // }
-    }
-    penalty_interest(principle,penalty_rate,normal_rate,term,outstanding_days) {   
-        // var pi = principle;
-        // const p=penalty_rate;
-        // var term=term;
-        // var o=outstanding_days;
-        let nor = this.normal_interest(principle,normal_rate,term);
-        const pen=((principle*penalty_rate/term)*outstanding_days)+((nor*penalty_rate/term)*outstanding_days);
-        // for(i=1;i<term;i++){
-        // var txt = '{"pen":'+pen+'}';
-        // var obj = JSON.parse(txt);
-        return pen; 
-        // }
-    }
     principal(principle,term) {
-        // var a = principle;
+        
         const pp= parseFloat(principle)/parseInt(term);
-        // for(i=1;i<=term;i++){
-        //     var txt = '{"pp":'+pp+'}';
-        //     var obj = JSON.parse(txt);
+
             return pp;
-        // }
+
     }
 
+    
+    normal_interest(principle,normal_rate,term) {
+    
+        let principle1=this.principal(principle,term);
+        const nor= parseFloat(principle1)*parseFloat(normal_rate/100)/parseInt(term)
+   
+
+            return nor;
+       
+    }
     outstanding_days(date, date_pay) {
         let days=1000*60*60*24;      
         let diffTime = Math.abs(Date.parse(date_pay)- Date.parse(date));
         var od = Math.ceil(diffTime / days);     
-        // var txt = '{"od":'+od+'}';
-        // var obj = JSON.parse(txt);
+        
         return od;
+        
     }
+    penalty_interest(principle,penalty_rate,normal_rate,term,outstanding_days) {
 
+        // var pi = principle;
+        // const p=penalty_rate;
+        // var term=term;
+        // var o=outstanding_days;
+
+        let nor = this.normal_interest(principle,normal_rate,term);
+        const pen=((principle*penalty_rate/term)*outstanding_days)+((nor*penalty_rate/term)*outstanding_days);
+        
+        // for(i=1;i<term;i++){
+        // var txt = '{"pen":'+pen+'}';
+        // var obj = JSON.parse(txt);
+
+
+        return pen; 
+       
+    }
 
     totalpay(principal,normal_interest,penalty_interest){
         // let pp=this.principal(principal,term)
@@ -101,8 +95,6 @@ class Functions {
 // const pen=300;
 // const term=2;
 // const sum=parseFloat(pp+nor+pen);
-
-
 for(i=1;i<+term;i++){
     //ກໍລະນີຜົນບວກທັງໝົດຂອງຄ່າທີ່ຕ້ອງຈ່າຍນ້ອຍກວ່າເງີນທີ່ ເຂົາຈ່າຍມາ
    if(amount<sum){
@@ -135,6 +127,7 @@ for(i=1;i<+term;i++){
 return ;
     }
 } 
+
 module.exports=Functions;
 
 
