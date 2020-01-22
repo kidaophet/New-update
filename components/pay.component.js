@@ -29,7 +29,7 @@ class Postpay{
     }
     // show all info
     async selectAll() {
-         const a = await this._database.query(`SELECT loan.loan_id,principal.principle,loan.term,rate.normal_rate,rate.penalty_rate,payment.amount,cal.normal_interest+cal.penalty_interest,
+         const a = await this._database.query(`SELECT loan.loan_id,principal.principle,loan.term,rate.normalInterest,rate.penaltyInterest,payment.amount,cal.normal_interest+cal.penalty_interest,
         loan.Date_loan,calculation.principlepay,calculation.normal_interest,payment.date_pay,cal.outstanding_days,calculation.penalty_interest,
         cal.pricinplepay+cal.normal_interest+cal.penalty_interest
         FROM payment

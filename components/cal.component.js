@@ -87,8 +87,8 @@ class Postcal{
 
             value['date'],
             value['principle'],
-            value['normal_rate'],
-            value['penalty_rate'],
+            value['normalInterest'],
+            value['penaltyInterest'],
             value['term'],
             value['total'],
             value['remain'],
@@ -120,13 +120,13 @@ class Postcal{
         let penalty_rate = value['penalty_rate'];
         let term = value['term'];
         let outstanding_days = value['outstanding_days'];
-        let normal_rate = value['normal_rate'];
+        let normal_rate = value['normalInterest'];
         
         const cal_func= new calcal();
         let cal_rate  = cal_func.calculate(
             pricinplepay,
-            penalty_rate,
-            normal_rate,
+            penaltyInterest,
+            normalInterest,
             term,
             outstanding_days
         );

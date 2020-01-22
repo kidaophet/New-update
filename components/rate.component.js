@@ -45,8 +45,8 @@ class Postsrate{
         if (errors) throw { errors };
   
         const item = await this._database.query('insert into rate value(0, ?, ?)', [
-            value['normal_rate'],
-            value['penalty_rate']
+            value['normalInterest'],
+            value['penaltyInterest']
         ]);
         return await this.selectOne(item.insertId);
     }
@@ -57,11 +57,11 @@ class Postsrate{
         if (errors || errorsId) throw { errors: errorsId || errors };
         await this._database.query(`
             update rate set 
-                normal_rate = ?,
-                penalty_rate=?
+                normalInterest = ?,
+                penaltInterest=?
             where rate_id = ?`, [
-                value['normal_rate'],
-                value['penalty_rate'],
+                value['normalInterest'],
+                value['penaltyInterest'],
                rate_id
             ]);
         return await this.selectOne(rate_id);

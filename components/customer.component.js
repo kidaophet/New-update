@@ -86,8 +86,8 @@ class Postscustomer {
     let Date_loan = new Date()
     // if (errors) throw { errors };
     const item2 = await this._database.query('insert into rate value(0, ?, ?)', [
-        value['normal_rate'],
-        value['penalty_rate']
+        value['normalInterest'],
+        value['penaltyInterest']
     ])
     const item3 = await this._database.query('insert into principal value(0, ?)', [
         value['principle']
@@ -115,8 +115,8 @@ class Postscustomer {
     const func_c_rate = new calcul();
     let cal = func_c_rate.calculate(
         value['principle'],
-        value['normal_rate'],
-        value['penalty_rate'],
+        value['normalInterest'],
+        value['penaltyInterest'],
         value['term'],
         '0'
     );
@@ -164,11 +164,11 @@ class Postscustomer {
         const errorsId = this._validate({ cus_id }, { cus_id: { numericality: true } });
         if (errors || errorsId) throw { errors: errorsId || errors };
         const item2 = await this._database.query('\
-        normal_rate=?,\
-        penalty_rate=?\
+        normalInterest=?,\
+        penaltyInterest=?\
         where rate_id=?', [
-            value['normal_rate'],
-            value['penalty_rate'],
+            value['normalInterest'],
+            value['penaltyInterest'],
             rate_id
         ])
         const item3 = await this._database.query('\
