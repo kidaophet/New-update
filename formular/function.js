@@ -68,7 +68,7 @@ class Functions {
         let nor = this.normal_interest(principle,normal_rate,term);
         const pen=((principle*penalty_rate/term)*outstanding_days)+((nor*penalty_rate/term)*outstanding_days);
         
-        // for(i=1;i<term;i++){
+        // for(i=1;i<term;i++){ 
         // var txt = '{"pen":'+pen+'}';
         // var obj = JSON.parse(txt);
 

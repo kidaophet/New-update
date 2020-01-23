@@ -66,21 +66,21 @@ class Postscustomer {
             }
         };
     }
-    // แสดงข้อมูลทั้งหมด
+    //show all data
     selectAll() {
         return this._database.query(`SELECT loan.loan_id,customer.cus_id,customer.firstname,customer.surname,loan.create_loan_date,loan.Date_loan,loan.term,principal.principle
         from loan
         JOIN customer ON customer.cus_id=loan.cus_id
         JOIN principal ON principal.pri_id=loan.pri_id`);
     }
-    // แสดงข้อมูลแค่ข้อมูลเดียว
+    // show one data
     async selectOne(cus_id) {
         const errors = this._validate({ cus_id }, {cus_id: { numericality: true } });
         if (errors) throw { errors };
         const items = await this._database.query('select * from customer where cus_id=?', [cus_id]);
         return items.length == 0 ? null : items[0];
     }
-   // เพิ่่มข้อมูลใหม่
+   // add new data
    async create(value) {
     // const errors = this._validate(value, this.validate_rules);
     let Date_loan = new Date()
@@ -101,7 +101,7 @@ class Postscustomer {
         value['email'],
         value['evidence']
     ])    
-    const item1 = await this._database.query('insert into loan value(0, ?,?, ?, ?, ?, ?, ?, ?, ?)', [
+    const item1 = await this._database.query('insert into loan value(0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
         "1",
         value['create_loan_date'],
         Date_loan,
@@ -110,7 +110,8 @@ class Postscustomer {
         item2.insertId,
         "NULL",
         "NULL",
-        "NULL"
+        "NULL",
+        item.insertId
     ])
     const func_c_rate = new calcul();
     let cal = func_c_rate.calculate(
@@ -158,7 +159,7 @@ class Postscustomer {
 }
 
 
-    // แก้ไขข้อมูล
+    // modify data
     async update(cus_id, value) {
         const errors = this._validate(value, this.validate_rules);
         const errorsId = this._validate({ cus_id }, { cus_id: { numericality: true } });
@@ -219,7 +220,7 @@ class Postscustomer {
         return await this.selectOne(rate_id,pri_id,cus_id,loan_id);
     }
 
-    // ลบข้อมูล
+    // delete data
     async delete(cus_id) {
         const errors = this._validate({ cus_id }, { cus_id: { numericality: true } });
         if (errors) throw { errors };
