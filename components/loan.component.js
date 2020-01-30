@@ -43,7 +43,7 @@ class Postsloan {
                 }
             }                      
         };
-    } 
+    }
     selectAll() {
         return this._database.query('SELECT*from loan');
     }

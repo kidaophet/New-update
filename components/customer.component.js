@@ -140,8 +140,6 @@ class Postscustomer {
         item1.insertId
          ]);
     }
-
-
     ////////////////////////////////
 
     // let out = func_c_rate.outstand(
@@ -157,8 +155,6 @@ class Postscustomer {
     return cal;
     // return await this.selectOne(item,item1,item2,item3,item4.insertId);
 }
-
-
     // modify data
     async update(cus_id, value) {
         const errors = this._validate(value, this.validate_rules);
@@ -178,7 +174,6 @@ class Postscustomer {
             value['principle'],
             pri_id
         ])
-
         await this._database.query(`
             update customer set 
                 firstname = ?, 

@@ -2,7 +2,6 @@ const validate = require('validate.js');
 const database = require('../configs/database');
 const calcal = require('../formular/function');
 
-
 class Postcal{
     //table user
     constructor(valid = validate, db = database.MySqlDatabase) {
@@ -69,22 +68,19 @@ class Postcal{
     selectAll() {
         return this._database.query('SELECT*from cal');
     }
-
     // show orderby ID
     async selectOne(id) {
         const errors = this._validate({ id }, {id: { numericality: true } });
         if (errors) throw { errors };
         const items = await this._database.query('SELECT * FROM cal where id=?', [id]);
         return items.length == 0 ? null : items[0];
-    }
-
+    } 
     // insert new info
     async create(value) {
         const errors = this._validate(value, this.validate_rules);
         if (errors) throw { errors };
         const func_c_rate = new calcal();
         let rate_c = func_c_rate.calculate(
-
             value['date'],
             value['principle'],
             value['normalInterest'],
@@ -95,7 +91,6 @@ class Postcal{
             value['amount'],
             value['date_pay']
         );
-
         const item = await this._database.query('insert into cal value(0, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
             value['date'],
             rate_c.principlepay,
@@ -109,50 +104,70 @@ class Postcal{
         ]);
         return await this.selectOne(cal.insertId);
     }
-
-
+    async LoanAmortization(loan_id) {
+        const result = await this._database.query(`SELECT loan.loan_id,principal.principle,loan.term,rate.normalInterest,rate.penaltyInterest,cal.amount,cal.normal_interest+cal.penalty_interest,cal.date,
+        principal.principle,cal.pricinplepay,cal.normal_interest,cal.outstanding_days,cal.penalty_interest,cal.pricinplepay+cal.normal_interest+cal.penalty_interest
+        from loan
+        JOIN principal ON principal.pri_id=loan.pri_id
+        JOIN rate ON rate.rate_id=loan.rate_id
+        JOIN cal ON cal.loan_id=loan.loan_id
+        WHERE loan.loan_id = ?`, [loan_id]);
+        return result[0];
+    }
     async SelectLastPayment(loan_id) {
         const result = await this._database.query('SELECT * FROM cal WHERE loan_id=? AND (remain IS NULL OR remain != 0) ORDER BY id ASC LIMIT 1', [loan_id]);
         return result[0];
-   }
-
+    }
     async Outstandingdays(loan_id){
        const datelast = await this._database.query('SELECT * FROM cal WHERE loan_id=? AND cal.date_pay IS NULL  ORDER BY id ASC LIMIT 1',[loan_id]);
-        let days=1000*60*60*24;
-        let current_date = new Date();
-        let diffTime= Math.abs(Date.parse(current_date)- Date.parse(datelast[0].date));  
-        var od = Math.ceil(diffTime / days);  
-       return od;
+        var secondDate= moment(datelast);
+        var firstDate = moment(date);
+        var days = Math.abs(firstDate.diff(secondDate,'days'));  
+       return days;
     }
-
+    async RemainOutstandingdays(loan_id){
+        const datelast = await this._database.query('SELECT * FROM cal WHERE loan_id=? AND cal.date_pay IS NOT NULL AND remain > 0  ORDER BY id ASC LIMIT 1',[loan_id]);
+         let days=1000*60*60*24;
+         let current_date = new Date();
+         let diffTime= Math.abs(Date.parse(current_date)- Date.parse(datelast[0].date_pay));  
+         var od = Math.ceil(diffTime / days);  
+        return od;
+     }
+     async RemainPenaltyInterest(loan_id){
+        const pen = await this._database.query('SELECT rate.penaltyInterest\
+        FROM loan\
+        JOIN rate ON rate.rate_id=loan.rate_id\
+        WHERE loan.loan_id=?',[loan_id]);
+        const prin = await this._database.query('SELECT principal.principle\
+        FROM loan\
+        JOIN principal ON principal.pri_id=loan.pri_id\
+        WHERE loan.loan_id=?',[loan_id]);
+        const loan = await this._database.query('SELECT * FROM `loan`\
+        WHERE loan_id=?',[loan_id]);
+        let term = loan[0].term;
+        let overdays = await this.RemainOutstandingdays(loan_id);
+        let penaltyInterest = parseFloat(prin[0].principle)*parseFloat(pen[0].penaltyInterest/100/term)*parseInt(overdays);
+        return penaltyInterest;
+    }
     async penaltyInterest(loan_id){
         const pen = await this._database.query('SELECT rate.penaltyInterest\
         FROM loan\
         JOIN rate ON rate.rate_id=loan.rate_id\
         WHERE loan.loan_id=?',[loan_id]);
-
         const prin = await this._database.query('SELECT principal.principle\
         FROM loan\
         JOIN principal ON principal.pri_id=loan.pri_id\
         WHERE loan.loan_id=?',[loan_id]);
-
         const loan = await this._database.query('SELECT * FROM `loan`\
         WHERE loan_id=?',[loan_id]);
-
         let term = loan[0].term;
-
         let overdays = await this.Outstandingdays(loan_id);
         let penaltyInterest = parseFloat(prin[0].principle)*parseFloat(pen[0].penaltyInterest/100/term)*parseInt(overdays);
-
         return penaltyInterest;
     }
-
     // let overdays=await this.Outstandingdays(loan_id);
-
-
 // Update new info
     async update(loan_id, value) {    
-
         let amount = value['amount'];
         let payment1 = await this.PaymentLoop(loan_id, amount);
         if(payment1 > 0){
@@ -197,21 +212,34 @@ class Postcal{
                 }     
             }
         }
-        return call_payment;
+        return payment1;
     }
     async PaymentLoop(loan_id, amount) {
         let last_pay = await this.SelectLastPayment(loan_id);
         let cal_id = last_pay.id;
         let pricinplepay = last_pay.pricinplepay;
         let normalInterest = last_pay.normal_interest;
+        let LastPenaltyInterest = last_pay.penalty_interest;
+        let LastOutstanding_days = last_pay.outstanding_days;
+        let total = 0;
+        if(last_pay.remain > 0){
+            let NewPenaltyInterest = await this.RemainPenaltyInterest(loan_id);
+            let outstanding_days = await this.RemainOutstandingdays(loan_id);
+            outstanding_days += LastOutstanding_days;
+            let sum = last_pay.remain + NewPenaltyInterest;
+            NewPenaltyInterest += LastPenaltyInterest;
+            total = pricinplepay + normalInterest + NewPenaltyInterest;
+            let payment = this.Payment(amount, sum, NewPenaltyInterest, outstanding_days, cal_id, total);
+            return payment
+        }
+
         let penaltyInterest = await this.penaltyInterest(loan_id);
         let outstanding_days = await this.Outstandingdays(loan_id);
         let sum = last_pay.total + penaltyInterest;
-        let payment = this.Payment(amount, sum, penaltyInterest, outstanding_days, cal_id);
+        let payment = this.Payment(amount, sum, penaltyInterest, outstanding_days, cal_id, total);
         return payment
     }
-
-    async Payment(amount, sum, penaltyInterest, outstanding_days, cal_id){
+    async Payment(amount, sum, penaltyInterest, outstanding_days, cal_id, total){
         let date_pay = new Date();
         let remain = 0;
         let over = null;
@@ -250,7 +278,7 @@ class Postcal{
             where id = ?`, [
                 penaltyInterest,
                 outstanding_days,
-                sum,
+                total,
                 remain,
                 amount,
                 date_pay,
@@ -281,7 +309,6 @@ class Postcal{
             return over;
         }
     }
-
     // Delete
     async delete(id) {
         const errors = this._validate({ id }, { id: { numericality: true } });

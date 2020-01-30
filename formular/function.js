@@ -51,11 +51,18 @@ class Functions {
        
     }
     outstanding_days(date, date_pay) {
-        let days=1000*60*60*24;      
-        let diffTime = Math.abs(Date.parse(date_pay)- Date.parse(date));
-        var od = Math.ceil(diffTime / days);     
+        // let days=1000*60*60*24;      
+        // let diffTime = Math.abs(Date.parse(date_pay)- Date.parse(date));
+        // var od = Math.ceil(diffTime / days);     
         
-        return od;
+        // var date1 = new Date('2020/01/11');
+        // var date2 = new Date();
+        var firstDate = moment(date);
+        var secondDate = moment(date_pay);
+
+        var days = Math.abs(firstDate.diff(secondDate,'days'));
+ 
+        return days;
         
     }
     penalty_interest(principle,penalty_rate,normal_rate,term,outstanding_days) {
