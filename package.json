@@ -15,7 +15,7 @@
     "date-and-time": "^0.10.0",
     "dateformat": "^3.0.3",
     "express": "^4.17.1",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "mysql": "^2.17.1",
     "urlencode": "^1.1.0",
     "validate.js": "^0.13.1"
